@@ -20,7 +20,7 @@ export default function Home() {
   };
   function fetchData() {
     setLoading(true)
-    axios.get(`http://gpt.figmasets.ru/?prompt="${value}"`, options)
+    axios.get(`https://gpt.figmasets.ru/?prompt="${value}"`, options)
       .then(function (response) {    // Обработка успешного ответа
         setSource(response.data.resp.text)
         setLoading(false)
