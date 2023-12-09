@@ -57,7 +57,7 @@ export default function Home() {
         <MarkdownPreview source={source} />
         {loading && <p>Загрузка...</p>}        
         <textarea className="w-1/2 h-20" type="text" value={value} onChange={handleChange} />
-        <button disable={ loading ?? true}onClick={fetchData}> 
+        <button disable={ loading && true}onClick={fetchData}> 
           Отправить
         </button>
     </main>
