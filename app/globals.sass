@@ -1,27 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@tailwind base
+@tailwind components
+@tailwind utilities
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
+:root 
+  --main-color: #fff
+  --back-color: #111
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
-}
+// @media (prefers-color-scheme: dark) 
+//   :root 
+//     --main-color: #fff
+//     --back-color: #000
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
-}
+body 
+  color: var(--main-color)
+  background: var(--back-color)
+  textarea
+    color: var(--back-color)
+  button
+    background: var(--main-color)
+    color: var(--back-color)
+  h2
+    font-size: 24px
+    font-weight: 600
+  textarea
+    overflow: hidden
