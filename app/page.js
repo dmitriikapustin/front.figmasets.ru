@@ -29,7 +29,7 @@ export default function Home() {
       .then(function (response) {    // Обработка успешного ответа
         setSource(response.data.resp.text)
         setLoading(false)
-        // console.log(response)
+        console.log(response)
       })
       .catch(function (error) {
         // Обработка ошибки при запросе
