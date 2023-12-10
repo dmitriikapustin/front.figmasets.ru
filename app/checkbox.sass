@@ -1,0 +1,27 @@
+.custom-checkbox 
+    display: inline-block
+    label 
+      display: flex
+      align-items: center
+      opacity: .5
+      cursor: pointer
+      .custom-checkbox__input 
+        position: absolute
+        opacity: 0
+        + .custom-checkbox__checkmark 
+          position: relative
+          display: inline-block
+          width: 10px
+          height: 10px
+          margin-right: 8px
+          border: 1px solid #ffffff50 // Цвет границы чекбокса
+          border-radius: 100px // Задаем радиус границы для чекбокса
+          &:after 
+            content: ''
+            position: absolute
+            display: none
+      &.checked .custom-checkbox__checkmark 
+        background: #fff
+        border: 1px solid #ffffff // Цвет границы чекбокса
+      &.checked 
+        opacity: 1
