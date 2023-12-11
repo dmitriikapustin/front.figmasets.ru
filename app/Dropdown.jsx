@@ -11,7 +11,7 @@ const Dropdown = ({ options, onSelect, label, def }) => {
 
   return (
     <div className="flex flex-row gap-4 items-center">
-      <p className='opacity-50'>{label}</p>
+      {label && <p className='opacity-60'>{label}</p>}
       <div className="dropdown w-fit pr-2">
         <select className="dropdown-select px-4 py-2" value={selectedOption} onChange={handleChange}>
           {options.map((option, index) => (

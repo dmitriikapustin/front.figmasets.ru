@@ -16,6 +16,7 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [temp, setTemp] = useState('0.7');
   const [tokens, setTokens] = useState('512');
+  const [preset, setPreset] = useState('Стандартный');
   const [parent, setParent] = useState('0');
   const [context, setContext] = useState(false);
 
@@ -45,24 +46,25 @@ export default function Home() {
   function fetchData() {
     const user = value
     let cont = null
-    setMessages([...messages, {role: "user", message: user}])
+    setMessages([...messages, {role: "user", content: user}])
     setLoading(true)
     setValue('')
     // context && messages[messages.length-1].id && setParent(messages[messages.length-1].id) 
 
     console.log(messages)
+    // https://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
     axios.get(`https://gpt.figmasets.ru/?prompt="${cont ? cont : user}"&system="${system}"&temp="${temp}"&tokens="${tokens}"&parent="${parent}"`, options)
       .then(function (response) {    // Обработка успешного ответа
         // setSource(response.data.resp.text)
         setLoading(false)
         console.log(response)
-        setMessages([...messages, {role: "user", message: user}, {role: "assistant", message: response.data.resp.text, id: response.data.resp.id}])
+        setMessages([...messages, {role: "user", content: user}, {role: "assistant", content: response.data.resp.text}])
       })
       .catch(function (error) {
         // Обработка ошибки при запросе
         console.error(error);
         setLoading(false)
-        setMessages([...messages, {role: "error", message: user}, {role: "assistant", message: error}])
+        // setMessages([...messages, {role: "error", content: user}, {role: "assistant", content: error}])
       })
       .then(function () {
         // Выполняется всегда после успешного или неуспешного завершения запроса
@@ -86,33 +88,54 @@ export default function Home() {
   const handleTokens = (value) => {
     setTokens(value)
   };
+  const handlePreset = (value) => {
+    setPreset(value)
+  };
+
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
 
   return (
     <main className="flex flex-row p-5 gap-5 h-screen">
-        <div className="sidebar rounded-lg flex flex-col justify-between items-start">
-          <div className='flex flex-row gap-4 items-center w-max'>
+        <div className="sidebar rounded-lg flex flex-col justify-start items-start">
+          <div className='flex flex-row gap-4 items-center w-max m-8'>
             <Image src="/logo.svg" width={80} height={100} alt='logo'/>
             <h2>kGPT</h2>
           </div>
-          <div className="flex flex-col p-4 mt-4 boxed w-full rounded-lg gap-8">
-            <div className='flex flex-col gap-2'>
-              <p className='opacity-50'>Системный prompt</p>
-              <input 
-                className="w-full h-11 p-5 rounded" 
-                type="text" 
-                value={system} 
-                onChange={handleSystem} 
-              />
+          <div className="flex flex-col gap-2 w-full">
+            <div className="flex flex-col p-4 mt-4 boxed w-full rounded-lg gap-8 pointer-events-none opacity-40">
+              <div className='flex flex-col gap-2'>
+                <p>Пресеты (coming soon)</p>
+                <Dropdown 
+                  def={0} 
+                  options={['Стандартный','Переводчик','Программист', 'Категоризация', 'Маркетолог', 'Сметчик']} 
+                  onSelect={handlePreset} 
+                />
+              </div>
             </div>
-            {/* <div className='flex flex-col gap-2'>
-              <p className='opacity-50'>Настройка контекста</p>
-              <Checkbox label='Сохранять контекст' onCheck={handleContext}/>
-            </div> */}
-            <div className='flex flex-col gap-2'>
-              {/* <p>Выбор температуры</p> */}
-              <Dropdown def={6} label='Температура:' options={['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1']} onSelect={handleTemp} />
-              <Dropdown def={3} label='Максимум токенов: ' options={['64','128','256','512','1024','2048',]} onSelect={handleTokens} />
+            <div className="flex flex-col p-4 mt-4 boxed w-full rounded-lg gap-8">
+              <div className='flex flex-col gap-2'>
+                <p className='opacity-60'>Системный prompt</p>
+                <input 
+                  className="w-full h-11 p-5 rounded" 
+                  type="text" 
+                  value={system} 
+                  onChange={handleSystem} 
+                />
+              </div>
+              <div className='flex flex-col gap-2 opacity-40 pointer-events-none'>
+                <p className='opacity-60'>Настройка контекста (coming soon)</p>
+                <Checkbox label='Сохранять контекст' onCheck={handleContext}/>
+              </div>
+              <div className='flex flex-col gap-2'>
+                {/* <p>Выбор температуры</p> */}
+                <Dropdown def={6} label='Температура:' options={['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1']} onSelect={handleTemp} />
+                <Dropdown def={3} label='Максимум токенов: ' options={['64','128','256','512','1024','2048',]} onSelect={handleTokens} />
+              </div>
             </div>
+          </div>
+          <div className="flex flex-col h-full justify-end">
+            <div className='opacity-40 text-xs'>© {currentYear}, created by <a href="https://kapustin.team" target='_blank'>k.team</a> <br/> Powered by OpenAI API <br/> GPT4-Turbo / gpt-4-1106-preview</div>
           </div>
         </div>
         <div className="main flex flex-col w-full justify-end items-center gap-4">
@@ -121,7 +144,7 @@ export default function Home() {
               { messages.map((message, i) => {
                 return (
                   <div className={"message w-full flex flex-row my-2 py-2 " + message.role} key={i}>
-                    <MarkdownPreview className='p-2 px-4 rounded-md' source={message.message} />
+                    <MarkdownPreview className='p-2 px-4 rounded-md' source={message.content} />
                     {/* Usage */}
                   </div>
                 )
