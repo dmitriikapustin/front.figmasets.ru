@@ -31,8 +31,10 @@ export default function Home() {
   async function fetchData () {
 
     const currentMessageIndex = context ? messages.length + 1 : 1
+    const currentMessages = context ? [...messages, {role: "user", content: value}, {role: "assistant", content: ''}] : [{role: "user", content: value}, {role: "assistant", content: ''}]
+
     setLoading(true)
-    context ? setMessages([...messages, {role: "user", content: value}, {role: "assistant", content: ''}]) : setMessages([{role: "user", content: value}, {role: "assistant", content: ''}])
+    setMessages(currentMessages)
     setValue('')
 
     const response = await fetch('https://api.goapi.xyz/v1/chat/completions', {
@@ -48,7 +50,7 @@ export default function Home() {
             "role": "system",
             "content": system
           },
-          ...messages
+          ...currentMessages
         ],
         "temperature": Number(temp),
         "max_tokens": Number(tokens),
