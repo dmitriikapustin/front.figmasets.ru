@@ -1,22 +1,15 @@
 'use client'
 
-import React, { useState } from 'react';
 
-const Checkbox = ({ label, onCheck }) => {
-  const [isChecked, setIsChecked] = useState(false);
-
-  const handleCheckboxChange = () => {
-    onCheck(!isChecked)
-    setIsChecked(!isChecked);
-  };
+const Checkbox = ({ label, isCheck, setIsCheck }) => {
 
   return (
     <div className="custom-checkbox">
-      <label className={isChecked ? 'checked' : ''}>
+      <label className={isCheck ? 'checked' : ''}>
         <input
           type="checkbox"
-          checked={isChecked}
-          onChange={handleCheckboxChange}
+          checked={isCheck}
+          onChange={() => {setIsCheck(!isCheck)}}
           className="custom-checkbox__input"
         />
         <span className="custom-checkbox__checkmark"></span>

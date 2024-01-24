@@ -10,27 +10,24 @@ import { useChat } from 'ai/react';
 
 export default function Home() {
 
-  const [source, setSource] = useState('');
-  const [loading, setLoading] = useState(false);
-  const [value, setValue] = useState('');
   const [system, setSystem] = useState('Ты - полезный помощник');
   const [temp, setTemp] = useState(0.5);
   const [tokens, setTokens] = useState(512);
   const [preset, setPreset] = useState('Стандартный');
   const [parent, setParent] = useState('0');
-  const [context, setContext] = useState(false);
+  const [context, setContext] = useState(true);
 
 
-  const { messages, input, handleInputChange, handleSubmit } = useChat(
+  const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat(
     {
       body: {
         temperature: Number(temp),
         max_tokens: Number(tokens),
-        system: system
-      },
-    sendExtraMessageFields: false
-  }
-  );
+        system: system,
+        isContext: context
+      }
+    }
+  )
 
 
   const handleSystem = (event) => {setSystem(event.target.value)}
@@ -44,7 +41,8 @@ export default function Home() {
   const handleEnterPress = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       event.preventDefault()
-      !loading && handleSubmit(event)
+      if (!context) setMessages([])
+      handleSubmit(event)
     }
   };
 
@@ -84,10 +82,9 @@ export default function Home() {
               </div>
               <div className='flex flex-col gap-2'>
                 <p className='opacity-60'>Настройка контекста</p>
-                <Checkbox label='Сохранять контекст' onCheck={handleContext}/>
+                <Checkbox label='Сохранять контекст' isCheck={context} setIsCheck={setContext}/>
               </div>
               <div className='flex flex-col gap-2'>
-                {/* <p>Выбор температуры</p> */}
                 <Dropdown def={4} label='Температура:' options={[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]} onSelect={handleTemp} />
                 <Dropdown def={4} label='Максимум токенов: ' options={[64, 128, 256, 512, 1024, 2048]} onSelect={handleTokens} />
               </div>
@@ -100,21 +97,11 @@ export default function Home() {
         <div className="main flex flex-col w-full justify-end items-center gap-4">
           <div className="messages flex flex-col rounded-lg w-full justify-end h-full gap-2 overflow-hidden">
             <div className="messagesScroll flex flex-col overflow-y-scroll px-2 mx-2 my-2 gap-4 items-end">
-              {messages?.map((message, i) => {
-                return (
-                  <div className={"message w-full flex flex-row my-2 py-2 " + message.role} key={i}>
-                    <MarkdownPreview className='p-2 px-4 rounded-md' source={message.content} />
-                    {/* Usage */}
-                  </div>
-                )
-              })}
-              {/* {loading && 
-                <div className='message w-full flex flex-row my-2 py-2 assistant'>
-                  <div className="typing-indicator rounded-md p-3"> 
-                    <span></span> <span></span> <span></span>
-                  </div> 
+              {messages?.map((message, i) => (
+                <div className={"message w-full flex flex-row my-2 py-2 " + message.role} key={i}>
+                  <MarkdownPreview className='p-2 px-4 rounded-md' source={message.content} />
                 </div>
-              }   */}
+              ))}
               <div ref={endOfMessagesRef} className='h-0'/>
             </div>
           </div>
@@ -125,7 +112,7 @@ export default function Home() {
               value={input} 
               onChange={handleInputChange} 
             />
-            <button className="rounded p-2 h-11" disabled={ loading && true} type='submit'> 
+            <button className="rounded p-2 h-11" type='submit'> 
               <Image src="/send.svg" width={28} height={28} alt='send_icon'/>
             </button>
           </form>      
