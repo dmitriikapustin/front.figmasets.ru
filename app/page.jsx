@@ -18,7 +18,7 @@ export default function Home() {
   const [context, setContext] = useState(false);
 
 
-  const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat(
+  const { messages, input, handleInputChange, handleSubmit } = useChat(
     {
       body: {
         temperature: Number(temp),
