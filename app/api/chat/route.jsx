@@ -7,7 +7,7 @@ export async function POST (req) {
   try {
     const { messages, system, temperature, max_tokens, isContext } = await req.json()
     
-    const contextMessages = isContext ? messages : [messages.slice(-1)[0]]
+    // const contextMessages = isContext ? messages : [messages.slice(-1)[0]]
     
     const response = await fetch('https://api.goapi.xyz/v1/chat/completions', {
       method: 'POST',
@@ -22,7 +22,7 @@ export async function POST (req) {
             "role": "system",
             "content": system || ''
           },
-          ...contextMessages
+          ...messages
         ],
         "temperature": temperature || 0.7,
         "max_tokens": max_tokens || 256,

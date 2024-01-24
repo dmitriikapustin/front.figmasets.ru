@@ -24,7 +24,7 @@ export default function Home() {
         temperature: Number(temp),
         max_tokens: Number(tokens),
         system: system,
-        isContext: context
+        // isContext: context
       }
     }
   )
@@ -41,12 +41,11 @@ export default function Home() {
   const handleEnterPress = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       event.preventDefault()
-      if (!context) setMessages([])
+      // if (!context) setMessages([])
       handleSubmit(event)
     }
   };
 
-  const handleContext = (value) => {setContext(value)}
   const handleTemp = (value) => {setTemp(value)}
   const handleTokens = (value) => {setTokens(value)}
   const handlePreset = (value) => {setPreset(value)}
@@ -80,7 +79,7 @@ export default function Home() {
                   onChange={handleSystem} 
                 />
               </div>
-              <div className='flex flex-col gap-2'>
+              <div className='flex flex-col gap-2 pointer-events-none opacity-40'>
                 <p className='opacity-60'>Настройка контекста</p>
                 <Checkbox label='Сохранять контекст' isCheck={context} setIsCheck={setContext}/>
               </div>
