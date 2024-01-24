@@ -15,7 +15,7 @@ export default function Home() {
   const [tokens, setTokens] = useState(512);
   const [preset, setPreset] = useState('Стандартный');
   const [parent, setParent] = useState('0');
-  const [context, setContext] = useState(true);
+  const [context, setContext] = useState(false);
 
 
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat(
@@ -86,7 +86,7 @@ export default function Home() {
               </div>
               <div className='flex flex-col gap-2'>
                 <Dropdown def={4} label='Температура:' options={[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1]} onSelect={handleTemp} />
-                <Dropdown def={4} label='Максимум токенов: ' options={[64, 128, 256, 512, 1024, 2048]} onSelect={handleTokens} />
+                <Dropdown def={3} label='Максимум токенов: ' options={[64, 128, 256, 512, 1024, 2048]} onSelect={handleTokens} />
               </div>
             </div>
           </div>
