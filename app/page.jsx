@@ -2,7 +2,6 @@
 import Image from 'next/image'
 import React, { useState, useRef, useEffect } from 'react'
 import MarkdownPreview from '@uiw/react-markdown-preview'
-import axios from 'axios'
 
 import Checkbox from './Checkbox'
 import Dropdown from './Dropdown';
@@ -20,80 +19,90 @@ export default function Home() {
   const [parent, setParent] = useState('0');
   const [context, setContext] = useState(false);
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
-  };
+  const handleSystem = (event) => {setSystem(event.target.value)}
 
-  const handleSystem = (event) => {
-    setSystem(event.target.value);
-  };
+  const endOfMessagesRef = useRef(null)
 
-  const endOfMessagesRef = useRef(null);
+  const scrollToBottom = () => {endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' })}
 
-  const scrollToBottom = () => {
-    endOfMessagesRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }
+  useEffect(() => {scrollToBottom()}, [messages])
 
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
 
-  const options = {
-    method: 'GET',
-    mode: 'cors',
-    headers: { 'Content-Type': 'application/json' }
-  };
-  function fetchData() {
-    const user = value
-    let cont = null
-    setMessages([...messages, {role: "user", content: user}])
+  async function fetchData () {
+
+    const currentMessageIndex = messages.length+1
     setLoading(true)
+    setMessages([...messages, {role: "user", content: value}, {role: "assistant", content: ''}])
     setValue('')
-    // context && messages[messages.length-1].id && setParent(messages[messages.length-1].id) 
 
-    console.log(messages)
-    // https://stackoverflow.com/questions/18310394/no-access-control-allow-origin-node-apache-port-issue
-    axios.get(`https://gpt.figmasets.ru/?prompt="${cont ? cont : user}"&system="${system}"&temp="${temp}"&tokens="${tokens}"&parent="${parent}"`, options)
-      .then(function (response) {    // Обработка успешного ответа
-        // setSource(response.data.resp.text)
-        setLoading(false)
-        console.log(response)
-        setMessages([...messages, {role: "user", content: user}, {role: "assistant", content: response.data.resp.text}])
+    const response = await fetch('https://api.goapi.xyz/v1/chat/completions', {
+      method: 'POST', 
+      headers: {
+        'Content-type': 'application/json',
+        'Authorization': 'Bearer 6c91b8b3628773040eb12cea4c69f3bdf9d787cf9b2d8b561a7a90c8d4ec28c3'
+      }, 
+      body: JSON.stringify({
+        "model": "gpt-4-1106-preview",
+        "messages": [
+          {
+            "role": "system",
+            "content": system
+          },
+          ...messages
+        ],
+        "temperature": Number(temp),
+        "max_tokens": Number(tokens),
+        "stream": true
       })
-      .catch(function (error) {
-        // Обработка ошибки при запросе
-        console.error(error);
-        setLoading(false)
-        // setMessages([...messages, {role: "error", content: user}, {role: "assistant", content: error}])
-      })
-      .then(function () {
-        // Выполняется всегда после успешного или неуспешного завершения запроса
-      });
+    }) 
+
+    let chunks = ''
+    const reader = response.body.pipeThrough(new TextDecoderStream()).getReader()
+    
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) {setLoading(false); return}
+
+      chunks += value
+      const lines = chunks.split('\n\n')
+      try {
+        lines.forEach((line) => {
+          const dataObj = JSON.parse(line.replace('data: ', ''))
+          const data = dataObj.choices[0].delta.content || ''
+
+          setMessages((prevState) => {
+            const prevArr = [...prevState] || []
+            console.log(data)
+            prevArr[currentMessageIndex].content = prevArr[currentMessageIndex]?.content + data
+            return prevArr
+          })
+        })
+      } 
+      catch {}
+  
+      chunks = lines.slice(-1)[0]
+    }
   }
+
+
+
   const handleEnterPress = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
-      event.preventDefault();
+      event.preventDefault()
       !loading && fetchData()
     }
   };
 
-  const handleContext = (value) => {
-    console.log(value)
-    setContext(value)
-  };
+  useEffect(() => {
+    console.log(source)
+  }, [source])
 
-  const handleTemp = (value) => {
-    setTemp(value)
-  };
-  const handleTokens = (value) => {
-    setTokens(value)
-  };
-  const handlePreset = (value) => {
-    setPreset(value)
-  };
 
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
+  const handleContext = (value) => {setContext(value)}
+  const handleTemp = (value) => {setTemp(value)}
+  const handleTokens = (value) => {setTokens(value)}
+  const handlePreset = (value) => {setPreset(value)}
+
 
   return (
     <main className="flex flex-row p-5 gap-5 h-screen">
@@ -123,8 +132,8 @@ export default function Home() {
                   onChange={handleSystem} 
                 />
               </div>
-              <div className='flex flex-col gap-2 opacity-40 pointer-events-none'>
-                <p className='opacity-60'>Настройка контекста (coming soon)</p>
+              <div className='flex flex-col gap-2'>
+                <p className='opacity-60'>Настройка контекста</p>
                 <Checkbox label='Сохранять контекст' onCheck={handleContext}/>
               </div>
               <div className='flex flex-col gap-2'>
@@ -135,13 +144,13 @@ export default function Home() {
             </div>
           </div>
           <div className="flex flex-col h-full justify-end">
-            <div className='opacity-40 text-xs'>© {currentYear}, created by <a href="https://kapustin.team" target='_blank'>k.team</a> <br/> Powered by OpenAI API <br/> GPT4-Turbo / gpt-4-1106-preview</div>
+            <div className='opacity-40 text-xs'>© {new Date().getFullYear()}, created by <a href="https://kapustin.team" target='_blank'>k.team</a> <br/> Powered by OpenAI API <br/> GPT4-Turbo / gpt-4-1106-preview</div>
           </div>
         </div>
         <div className="main flex flex-col w-full justify-end items-center gap-4">
           <div className="messages flex flex-col rounded-lg w-full justify-end h-full gap-2 overflow-hidden">
             <div className="messagesScroll flex flex-col overflow-y-scroll px-2 mx-2 my-2 gap-4 items-end">
-              { messages.map((message, i) => {
+              {messages?.map((message, i) => {
                 return (
                   <div className={"message w-full flex flex-row my-2 py-2 " + message.role} key={i}>
                     <MarkdownPreview className='p-2 px-4 rounded-md' source={message.content} />
@@ -149,7 +158,7 @@ export default function Home() {
                   </div>
                 )
               })}
-              { loading && 
+              {loading && 
                 <div className='message w-full flex flex-row my-2 py-2 assistant'>
                   <div className="typing-indicator rounded-md p-3"> 
                     <span></span> <span></span> <span></span>
@@ -164,7 +173,7 @@ export default function Home() {
               className="w-full h-11 p-5 rounded" 
               type="text" 
               value={value} 
-              onChange={handleChange} 
+              onChange={(event) => setValue(event.target.value)} 
               onKeyDown={handleEnterPress}
             />
             <button className="rounded p-2 h-11" disabled={ loading && true} onClick={fetchData}> 
