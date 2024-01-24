@@ -30,9 +30,9 @@ export default function Home() {
 
   async function fetchData () {
 
-    const currentMessageIndex = messages.length+1
+    const currentMessageIndex = context ? messages.length + 1 : 1
     setLoading(true)
-    setMessages([...messages, {role: "user", content: value}, {role: "assistant", content: ''}])
+    context ? setMessages([...messages, {role: "user", content: value}, {role: "assistant", content: ''}]) : setMessages([{role: "user", content: value}, {role: "assistant", content: ''}])
     setValue('')
 
     const response = await fetch('https://api.goapi.xyz/v1/chat/completions', {
@@ -72,7 +72,6 @@ export default function Home() {
 
           setMessages((prevState) => {
             const prevArr = [...prevState] || []
-            console.log(data)
             prevArr[currentMessageIndex].content = prevArr[currentMessageIndex]?.content + data
             return prevArr
           })
@@ -85,18 +84,12 @@ export default function Home() {
   }
 
 
-
   const handleEnterPress = (event) => {
     if (event.key === 'Enter' || event.keyCode === 13) {
       event.preventDefault()
       !loading && fetchData()
     }
   };
-
-  useEffect(() => {
-    console.log(source)
-  }, [source])
-
 
   const handleContext = (value) => {setContext(value)}
   const handleTemp = (value) => {setTemp(value)}
