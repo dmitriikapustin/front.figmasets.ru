@@ -13,8 +13,8 @@ export default function Home() {
   const [value, setValue] = useState('');
   const [system, setSystem] = useState('Ты - полезный помощник');
   const [messages, setMessages] = useState([]);
-  const [temp, setTemp] = useState('0.7');
-  const [tokens, setTokens] = useState('512');
+  const [temp, setTemp] = useState('0.5');
+  const [tokens, setTokens] = useState('128');
   const [preset, setPreset] = useState('Стандартный');
   const [parent, setParent] = useState('0');
   const [context, setContext] = useState(false);
@@ -153,13 +153,13 @@ export default function Home() {
                   </div>
                 )
               })}
-              {loading && 
+              {/* {loading && 
                 <div className='message w-full flex flex-row my-2 py-2 assistant'>
                   <div className="typing-indicator rounded-md p-3"> 
                     <span></span> <span></span> <span></span>
                   </div> 
                 </div>
-              }  
+              }   */}
               <div ref={endOfMessagesRef} className='h-0'/>
             </div>
           </div>
