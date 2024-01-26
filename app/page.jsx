@@ -109,7 +109,7 @@ export default function Home() {
           <div className="flex flex-col gap-2 w-full">
             <div className="flex flex-col p-4 mt-4 boxed w-full rounded-lg gap-8">
               <div className='flex flex-col gap-2'>
-                <p>Пресеты (coming soon)</p>
+                <p>Модель</p>
                 <Dropdown 
                   def={0} 
                   options={['gpt-4-1106-preview','gpt-3.5-turbo']} 
