@@ -111,7 +111,7 @@ export default function Home() {
               <div className='flex flex-col gap-2'>
                 <p>Модель</p>
                 <Dropdown 
-                  def={0} 
+                  def={preset} 
                   options={['gpt-4-1106-preview','gpt-3.5-turbo']} 
                   onSelect={handlePreset} 
                 />
