@@ -44,7 +44,7 @@ export default function Home() {
         'Authorization': 'Bearer 6c91b8b3628773040eb12cea4c69f3bdf9d787cf9b2d8b561a7a90c8d4ec28c3'
       }, 
       body: JSON.stringify({
-        "model": "gpt-4-1106-preview",
+        "model": preset,
         "messages": [
           {
             "role": "system",
@@ -107,12 +107,12 @@ export default function Home() {
             <h2>kGPT</h2>
           </div>
           <div className="flex flex-col gap-2 w-full">
-            <div className="flex flex-col p-4 mt-4 boxed w-full rounded-lg gap-8 pointer-events-none opacity-40">
+            <div className="flex flex-col p-4 mt-4 boxed w-full rounded-lg gap-8">
               <div className='flex flex-col gap-2'>
-                <p>Пресеты (coming soon)</p>
+                <p>Модель</p>
                 <Dropdown 
                   def={0} 
-                  options={['Стандартный','Переводчик','Программист', 'Категоризация', 'Маркетолог', 'Сметчик']} 
+                  options={['gpt-4-1106-preview','gpt-3.5-turbo']} 
                   onSelect={handlePreset} 
                 />
               </div>
@@ -133,8 +133,8 @@ export default function Home() {
               </div>
               <div className='flex flex-col gap-2'>
                 {/* <p>Выбор температуры</p> */}
-                <Dropdown def={6} label='Температура:' options={['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1']} onSelect={handleTemp} />
-                <Dropdown def={3} label='Максимум токенов: ' options={['64','128','256','512','1024','2048',]} onSelect={handleTokens} />
+                <Dropdown def={4} label='Температура:' options={['0.1','0.2','0.3','0.4','0.5','0.6','0.7','0.8','0.9','1']} onSelect={handleTemp} />
+                <Dropdown def={4} label='Максимум токенов: ' options={['64','128','256','512','1024','2048',]} onSelect={handleTokens} />
               </div>
             </div>
           </div>
