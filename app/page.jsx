@@ -15,7 +15,7 @@ export default function Home() {
   const [messages, setMessages] = useState([]);
   const [temp, setTemp] = useState('0.5');
   const [tokens, setTokens] = useState('512');
-  const [preset, setPreset] = useState('gpt-3.5-turbo');
+  const [preset, setPreset] = useState('gpt-3.5-turbo-1106');
   const [parent, setParent] = useState('0');
   const [context, setContext] = useState(false);
 
@@ -111,8 +111,8 @@ export default function Home() {
               <div className='flex flex-col gap-2'>
                 <p>Модель</p>
                 <Dropdown 
-                  def={preset} 
-                  options={['gpt-4-1106-preview','gpt-3.5-turbo']} 
+                  def={0} 
+                  options={['gpt-3.5-turbo-1106','gpt-4-turbo-preview']} 
                   onSelect={handlePreset} 
                 />
               </div>
